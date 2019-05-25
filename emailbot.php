@@ -15,10 +15,9 @@ $mailContent = $_POST['body-plain'];
 // 메일 Template 작성
 $recvContents = <<<TEMPLATE
 
-메일 전달 받은 시간 : {$timestamp} ({$_POST['timestamp']})
+메일 시간 : {$timestamp} ({$_POST['timestamp']})
 메일 발송자 : {$_POST['from']}
 메일 제목 : {$_POST['subject']}
-== 메일 내용 ==
 ```
 {$mailContent}
 ```
@@ -35,7 +34,12 @@ $curlOption = array(
 	CURLOPT_HEADER => false,
 	CURLOPT_RETURNTRANSFER => true,
 	CURLOPT_POST => true,
-	CURLOPT_POSTFIELDS => http_build_query(array('content'=>$recvContents))
+	CURLOPT_POSTFIELDS => http_build_query(
+		array(
+			'username' => "[보낸 사람] {$_POST['from']}",
+			'content' => $recvContents
+		)
+	)
 );
 curl_setopt_array($curl, $curlOption);
 curl_exec($curl);
